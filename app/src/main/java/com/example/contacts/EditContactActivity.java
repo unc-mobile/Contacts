@@ -140,6 +140,7 @@ public class EditContactActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            return false;
         }
     }
 
@@ -156,6 +157,7 @@ public class EditContactActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            return false;
         }
     }
 

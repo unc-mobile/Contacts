@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
         @Override
         protected Cursor doInBackground(Long... longs) {
             long id = longs[0];
+            return null;
         }
     }
 
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
 
         @Override
         protected Cursor doInBackground(Void... voids) {
+            return null;
         }
     }
 

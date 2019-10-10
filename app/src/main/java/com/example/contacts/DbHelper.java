@@ -62,6 +62,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @WorkerThread
     public boolean deleteContact(long id) {
+        return false;
     }
 
     private byte[] compress(Bitmap picture) {
