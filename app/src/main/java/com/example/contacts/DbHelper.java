@@ -45,23 +45,43 @@ public class DbHelper extends SQLiteOpenHelper {
     @WorkerThread
     private boolean insertContact(SQLiteDatabase db, String name, String phone, String email, Bitmap picture) {
         ContentValues values = makeContentValues(name, phone, email, picture);
+
+        long id = db.insert(Contract.ContactsTable.TABLE_NAME, null, values);
+        if (id == -1) {
+            MainActivity.log("Failed to insert contact " + name + " into database!");
+            return false;
+        }
         return true;
     }
 
     private ContentValues makeContentValues(String name, String phone, String email, Bitmap picture) {
         ContentValues values = new ContentValues();
+        values.put(Contract.ContactsTable.COLUMN_NAME_NAME, name);
+        values.put(Contract.ContactsTable.COLUMN_NAME_PHONE, phone);
+        values.put(Contract.ContactsTable.COLUMN_NAME_EMAIL, email);
+        values.put(Contract.ContactsTable.COLUMN_NAME_PICTURE, compress(picture));
         return values;
     }
 
     @WorkerThread
     public boolean updateContact(long id, String name, String phone, String email, Bitmap picture) {
         ContentValues values = makeContentValues(name, phone, email, picture);
+        int rowsUpdated = getWritableDatabase().update(Contract.ContactsTable.TABLE_NAME,
+                values, Contract.ContactsTable._ID + " = ?",
+                new String[] { String.valueOf(id) });
+        if (rowsUpdated == 1) {
+            return true;
+        }
+
         MainActivity.log("Failed to update");
         return false;
     }
 
     @WorkerThread
     public boolean deleteContact(long id) {
+        return getWritableDatabase().delete(Contract.ContactsTable.TABLE_NAME,
+                Contract.ContactsTable._ID + " = ?",
+                new String[] { String.valueOf(id) }) == 1;
     }
 
     private byte[] compress(Bitmap picture) {

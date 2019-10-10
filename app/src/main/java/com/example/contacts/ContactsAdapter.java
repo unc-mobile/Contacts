@@ -25,8 +25,28 @@ public class ContactsAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+        int nameIndex = cursor.getColumnIndex(Contract.ContactsTable.COLUMN_NAME_NAME);
         TextView textView = view.findViewById(R.id.name);
+        if (nameIndex == -1) {
+            MainActivity.log("Missing name from Cursor!");
+            textView.setText("");
+        } else {
+            String name = cursor.getString(nameIndex);
+            textView.setText(name);
+        }
 
+        int pictureIndex = cursor.getColumnIndex(Contract.ContactsTable.COLUMN_NAME_PICTURE);
         ImageView imageView = view.findViewById(R.id.picture);
+        if (pictureIndex == -1) {
+            MainActivity.log("Missing picture from Cursor!");
+        } else {
+            byte[] blob = cursor.getBlob(pictureIndex);
+            if (blob != null) {
+                Bitmap picture = BitmapFactory.decodeByteArray(blob, 0, blob.length);
+                imageView.setImageBitmap(picture);
+            } else {
+                imageView.setImageResource(R.mipmap.ic_launcher_round);
+            }
+        }
     }
 }

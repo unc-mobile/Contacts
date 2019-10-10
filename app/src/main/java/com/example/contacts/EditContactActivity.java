@@ -140,6 +140,11 @@ public class EditContactActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            if (mEditingExisting) {
+                return mDatabase.updateContact(mIdToModify, mName, mPhone, mEmail, mPicture);
+            } else {
+                return mDatabase.insertContact(mName, mPhone, mEmail, mPicture);
+            }
         }
     }
 
@@ -156,6 +161,7 @@ public class EditContactActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
+            return mDatabase.deleteContact(mIdToModify);
         }
     }
 

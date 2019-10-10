@@ -82,12 +82,48 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
             Intent intent = new Intent(MainActivity.this, EditContactActivity.class);
             intent.putExtra(Intent.EXTRA_TITLE, "New contact");
 
+            for (String key : new String[] {
+                    Contract.ContactsTable.COLUMN_NAME_NAME,
+                    Contract.ContactsTable.COLUMN_NAME_PHONE,
+                    Contract.ContactsTable.COLUMN_NAME_EMAIL
+            }) {
+                int columnIndex = cursor.getColumnIndex(key);
+                if (columnIndex == -1) {
+                    Toast.makeText(MainActivity.this, "Missing column " + key,
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                intent.putExtra(key, cursor.getString(columnIndex));
+            }
+
+            int pictureIndex = cursor.getColumnIndex(Contract.ContactsTable.COLUMN_NAME_PICTURE);
+            if (pictureIndex == -1) {
+                Toast.makeText(MainActivity.this,
+                        "Missing column " + Contract.ContactsTable.COLUMN_NAME_PICTURE,
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            byte[] pictureBlob = cursor.getBlob(pictureIndex);
+            intent.putExtra(Contract.ContactsTable.COLUMN_NAME_PICTURE, pictureBlob);
+
+            int idIndex = cursor.getColumnIndex(Contract.ContactsTable._ID);
+            if (idIndex == -1) {
+                Toast.makeText(MainActivity.this, "Missing ID", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            long id = cursor.getLong(idIndex);
+            intent.putExtra(Contract.ContactsTable._ID, id);
+
             startActivityForResult(intent, REQUEST_CODE_EDIT_CONTACT);
         }
 
         @Override
         protected Cursor doInBackground(Long... longs) {
             long id = longs[0];
+            return mDatabase.getReadableDatabase().query(Contract.ContactsTable.TABLE_NAME, null,
+                    Contract.ContactsTable._ID + " = ?", new String[] { String.valueOf(id)},
+                    null, null, null);
         }
     }
 
@@ -109,6 +145,15 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
 
         @Override
         protected Cursor doInBackground(Void... voids) {
+            String[] projection = new String[] {
+                    Contract.ContactsTable._ID,
+                    Contract.ContactsTable.COLUMN_NAME_NAME,
+                    Contract.ContactsTable.COLUMN_NAME_PICTURE
+            };
+
+            return mDatabase.getReadableDatabase().query(Contract.ContactsTable.TABLE_NAME,
+                    projection, null, null, null, null,
+                    null);
         }
     }
 
